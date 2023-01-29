@@ -23,14 +23,35 @@ const Boards = styled.div`
 
 function Todolist() {
   const [todos, setTodos] = useRecoilState(todoState);
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = (info: DropResult) => {
+    const { destination, source, draggableId } = info;
     if (!destination) return;
-    // setTodos((oldTodos) => {
-    //   const copyTodos = [...oldTodos];
-    //   copyTodos.splice(source.index, 1);
-    //   copyTodos.splice(destination?.index, 0, draggableId);
-    //   return copyTodos;
-    // });
+    if (destination.droppableId === source.droppableId) {
+      // same board movement
+      setTodos((oldTodos) => {
+        const copyTodos = [...oldTodos[source.droppableId]];
+        copyTodos.splice(source.index, 1);
+        copyTodos.splice(destination.index, 0, draggableId);
+        return {
+          ...oldTodos,
+          [source.droppableId]: copyTodos,
+        };
+      });
+    }
+    if (destination.droppableId !== source.droppableId) {
+      // cross board movement
+      setTodos((oldTodos) => {
+        const sourceTodos = [...oldTodos[source.droppableId]];
+        const destTodos = [...oldTodos[destination.droppableId]];
+        sourceTodos.splice(source.index, 1);
+        destTodos.splice(destination.index, 0, draggableId);
+        return {
+          ...oldTodos,
+          [source.droppableId]: sourceTodos,
+          [destination.droppableId]: destTodos,
+        };
+      });
+    }
   };
   return (
     <>
