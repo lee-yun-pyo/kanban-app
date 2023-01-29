@@ -5,6 +5,8 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { todoState } from "../atoms";
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,10 +37,17 @@ const Card = styled.li`
   margin-bottom: 15px;
 `;
 
-const todos = ["a", "b", "c", "d"];
-
 function Todolist() {
-  const onDragEnd = () => {};
+  const [todos, setTodos] = useRecoilState(todoState);
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return;
+    setTodos((oldTodos) => {
+      const copyTodos = [...oldTodos];
+      copyTodos.splice(source.index, 1);
+      copyTodos.splice(destination?.index, 0, draggableId);
+      return copyTodos;
+    });
+  };
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
