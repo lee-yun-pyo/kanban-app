@@ -10,13 +10,14 @@ const Card = styled.li<{ isDragging: boolean }>`
 `;
 
 interface IDraggableProps {
-  todo: string;
+  todoId: number;
+  todoText: string;
   index: number;
 }
 
-function DraggableTodo({ todo, index }: IDraggableProps) {
+function DraggableTodo({ todoId, todoText, index }: IDraggableProps) {
   return (
-    <Draggable key={todo} draggableId={todo} index={index}>
+    <Draggable draggableId={todoId + ""} index={index}>
       {(provided, snapshot) => (
         <Card
           ref={provided.innerRef}
@@ -24,7 +25,7 @@ function DraggableTodo({ todo, index }: IDraggableProps) {
           {...provided.draggableProps}
           isDragging={snapshot.isDragging}
         >
-          {todo}
+          {todoText}
         </Card>
       )}
     </Draggable>

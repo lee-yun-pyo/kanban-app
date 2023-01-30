@@ -30,8 +30,9 @@ function Todolist() {
       // same board movement
       setTodos((oldTodos) => {
         const copyTodos = [...oldTodos[source.droppableId]];
+        const todoObj = copyTodos[source.index];
         copyTodos.splice(source.index, 1);
-        copyTodos.splice(destination.index, 0, draggableId);
+        copyTodos.splice(destination.index, 0, todoObj);
         return {
           ...oldTodos,
           [source.droppableId]: copyTodos,
@@ -43,8 +44,9 @@ function Todolist() {
       setTodos((oldTodos) => {
         const sourceTodos = [...oldTodos[source.droppableId]];
         const destTodos = [...oldTodos[destination.droppableId]];
+        const todoObj = sourceTodos[source.index];
         sourceTodos.splice(source.index, 1);
-        destTodos.splice(destination.index, 0, draggableId);
+        destTodos.splice(destination.index, 0, todoObj);
         return {
           ...oldTodos,
           [source.droppableId]: sourceTodos,
