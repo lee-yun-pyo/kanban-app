@@ -17,8 +17,20 @@ const Title = styled.span`
   margin-bottom: 15px;
 `;
 
-const Board = styled.ul`
+interface IBoardProps {
+  isDraggingOver: boolean;
+  isDraggingFromThisWith: boolean;
+}
+
+const Board = styled.ul<IBoardProps>`
   width: 100%;
+  background-color: ${(props) =>
+    props.isDraggingOver
+      ? "pink"
+      : props.isDraggingFromThisWith
+      ? "red"
+      : "blue"};
+  flex-grow: 1;
 `;
 
 interface IDroppableProps {
@@ -31,8 +43,13 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
     <Wrapper>
       <Title>{boardId}</Title>
       <Droppable droppableId={boardId}>
-        {(provided) => (
-          <Board ref={provided.innerRef} {...provided.droppableProps}>
+        {(provided, snapshot) => (
+          <Board
+            isDraggingOver={snapshot.isDraggingOver}
+            isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
             {todos.map((todo, index) => (
               <DraggableTodo key={todo} todo={todo} index={index} />
             ))}
