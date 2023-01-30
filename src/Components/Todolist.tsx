@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useRecoilState } from "recoil";
 import { todoState } from "../atoms";
 import DroppableCategory from "./DroppableCategory";
+import DroppableRemove from "./DroppableRemove";
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,8 +25,20 @@ const Boards = styled.div`
 function Todolist() {
   const [todos, setTodos] = useRecoilState(todoState);
   const onDragEnd = (info: DropResult) => {
-    const { destination, source, draggableId } = info;
+    const { destination, source } = info;
     if (!destination) return;
+    if (destination.droppableId === "remove") {
+      // To remove
+      setTodos((oldTodos) => {
+        const copyTodos = [...oldTodos[source.droppableId]];
+        copyTodos.splice(source.index, 1);
+        return {
+          ...oldTodos,
+          [source.droppableId]: copyTodos,
+        };
+      });
+      return;
+    }
     if (destination.droppableId === source.droppableId) {
       // same board movement
       setTodos((oldTodos) => {
@@ -67,6 +80,7 @@ function Todolist() {
                 boardId={boardId}
               />
             ))}
+            <DroppableRemove />
           </Boards>
         </Wrapper>
       </DragDropContext>
