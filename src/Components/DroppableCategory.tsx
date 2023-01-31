@@ -3,7 +3,7 @@ import styled from "styled-components";
 import DraggableTodo from "./DraggableTodo";
 import { useForm } from "react-hook-form";
 import { ITodo, todoState } from "../atoms";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 const Wrapper = styled.div`
   background-color: skyblue;
@@ -48,7 +48,7 @@ interface IDroppableProps {
 }
 
 function DroppableCategory({ todos, boardId }: IDroppableProps) {
-  const [todo, setTodo] = useRecoilState(todoState);
+  const setTodo = useSetRecoilState(todoState);
   const { register, setValue, handleSubmit } = useForm();
   const onValid = ({ todo }: any) => {
     const newObj = {
@@ -64,35 +64,38 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
     setValue("todo", "");
   };
   return (
-    <Wrapper>
-      <Title>{boardId}</Title>
-      <Form onSubmit={handleSubmit(onValid)}>
-        <input
-          {...register("todo", { required: true })}
-          placeholder="Write todos..."
-        />
-      </Form>
-      <Droppable droppableId={boardId}>
-        {(provided, snapshot) => (
-          <Board
-            isDraggingOver={snapshot.isDraggingOver}
-            isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {todos.map((todo, index) => (
-              <DraggableTodo
-                key={todo.id}
-                todoId={todo.id}
-                todoText={todo.text}
-                index={index}
-              />
-            ))}
-            {provided.placeholder}
-          </Board>
-        )}
-      </Droppable>
-    </Wrapper>
+    <>
+      <Wrapper>
+        <Title>{boardId}</Title>
+        <Form onSubmit={handleSubmit(onValid)}>
+          <input
+            {...register("todo", { required: true })}
+            placeholder="Write todos..."
+          />
+        </Form>
+        <Droppable droppableId={boardId}>
+          {(provided, snapshot) => (
+            <Board
+              isDraggingOver={snapshot.isDraggingOver}
+              isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {todos.map((todo, index) => (
+                <DraggableTodo
+                  key={todo.id}
+                  todoId={todo.id}
+                  todoText={todo.text}
+                  index={index}
+                  boardId={boardId}
+                />
+              ))}
+              {provided.placeholder}
+            </Board>
+          )}
+        </Droppable>
+      </Wrapper>
+    </>
   );
 }
 

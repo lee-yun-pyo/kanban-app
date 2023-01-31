@@ -17,3 +17,12 @@ export const todoState = atom<ITodoState>({
         Done: []
     }
 })
+
+export const modalState = atom({
+    key: "isDisplay",
+    default: {
+        isDisplay: false,
+        position: [0, 0, 0]
+        // top, left, width 순
+    }
+})
