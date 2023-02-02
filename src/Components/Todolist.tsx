@@ -7,19 +7,44 @@ import DroppableRemove from "./DroppableRemove";
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 680px;
   width: 100%;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-color: #74b9ff;
+  padding: 10px;
 `;
 
 const Boards = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
   width: 100%;
+`;
+
+const AddListDiv = styled.div`
+  width: 272px;
+  background-color: #ebecf0;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  span {
+    padding: 6px 8px;
+    color: #6c7990;
+    span {
+      padding: 0;
+    }
+  }
+  :hover {
+    background-color: #dadbe2;
+    span {
+      color: #172b4d;
+    }
+  }
 `;
 
 function Todolist() {
@@ -72,16 +97,26 @@ function Todolist() {
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
-          <Boards>
-            {Object.keys(todos).map((boardId) => (
-              <DroppableCategory
-                key={boardId}
-                todos={todos[boardId]}
-                boardId={boardId}
-              />
-            ))}
+          <div>
+            <Boards>
+              {Object.keys(todos).map((boardId) => (
+                <DroppableCategory
+                  key={boardId}
+                  todos={todos[boardId]}
+                  boardId={boardId}
+                />
+              ))}
+              <AddListDiv>
+                <span>
+                  <span style={{ marginRight: "5px" }}>
+                    <i className="fa-solid fa-plus"></i>
+                  </span>
+                  Add another list
+                </span>
+              </AddListDiv>
+            </Boards>
             <DroppableRemove />
-          </Boards>
+          </div>
         </Wrapper>
       </DragDropContext>
     </>

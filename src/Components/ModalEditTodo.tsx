@@ -102,11 +102,12 @@ const Btn = styled.button`
 `;
 
 interface IModalEditProps {
+  toUse: string;
   boardId: string;
-  index: number;
+  index?: number;
 }
 
-function ModalEditTodo({ boardId, index }: IModalEditProps) {
+function ModalEditTodo({ toUse, boardId, index }: IModalEditProps) {
   const { register, handleSubmit } = useForm();
   const [displayModal, setDisplayModal] = useRecoilState(modalState);
   const setTodo = useSetRecoilState(todoState);
@@ -118,10 +119,11 @@ function ModalEditTodo({ boardId, index }: IModalEditProps) {
       };
     });
   };
-  const editTodo = ({ todo }: any) => {
+  const editTodo = ({ value }: any) => {
+    /* todo text 수정 코드 */
     const editCard = {
       id: Date.now(),
-      text: todo,
+      text: value,
     };
     setTodo((oldTodos) => {
       /* 수정 기능 구현 진행 중 */
@@ -156,8 +158,10 @@ function ModalEditTodo({ boardId, index }: IModalEditProps) {
         left={displayModal.position[1]}
         width={displayModal.position[2]}
       >
-        <Form onSubmit={handleSubmit(editTodo)}>
-          <Input {...register("todo", { required: true })} />
+        <Form
+          onSubmit={handleSubmit(toUse === "category" ? addCategory : editTodo)}
+        >
+          <Input {...register("value", { required: true })} />
           <Btn type="submit">Save</Btn>
         </Form>
       </Content>

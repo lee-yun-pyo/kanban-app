@@ -6,13 +6,44 @@ import { useSetRecoilState } from "recoil";
 import ModalEditTodo from "./ModalEditTodo";
 
 const Card = styled.li<{ isDragging: boolean }>`
-  background-color: ${(props) => (props.isDragging ? "tomato" : "whitesmoke")};
-  border-radius: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
   padding: 10px;
   margin-bottom: 15px;
+  box-shadow: ${(props) =>
+    props.isDragging
+      ? "0px 0px 2px rgba(0, 0, 0, 0.3)"
+      : "0px 1.5px 0px rgba(0, 0, 0, 0.2)"};
+  position: relative;
+  :hover {
+    background-color: #f4f5f7;
+  }
+  &:last-child {
+    background-color: red;
+  }
 `;
 
-const EditBtn = styled.button``;
+const EditBtn = styled.button`
+  display: hidden;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: transparent;
+  :hover {
+    display: "";
+    background-color: #dadbe2;
+    i {
+      color: #172b4d;
+    }
+  }
+  i {
+    color: #6b778c;
+  }
+`;
 
 interface IDraggableProps {
   boardId: string;
@@ -25,8 +56,6 @@ function DraggableTodo({ boardId, todoId, todoText, index }: IDraggableProps) {
   const setDisplayModal = useSetRecoilState(modalState);
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
     const card = event.currentTarget.parentElement;
-    console.log(card?.dataset.rbdDraggableId);
-    console.log(card?.parentElement?.parentElement);
     const cssInfo = card?.getBoundingClientRect();
     if (cssInfo) {
       const left = cssInfo.left;
@@ -46,11 +75,13 @@ function DraggableTodo({ boardId, todoId, todoText, index }: IDraggableProps) {
             isDragging={snapshot.isDragging}
           >
             {todoText}
-            <EditBtn onClick={handleEdit}>편집</EditBtn>
+            <EditBtn onClick={handleEdit}>
+              <i className="fa-solid fa-pen"></i>
+            </EditBtn>
           </Card>
         )}
       </Draggable>
-      <ModalEditTodo boardId={boardId} index={index} />
+      <ModalEditTodo toUse="toDoCard" boardId={boardId} index={index} />
     </>
   );
 }
