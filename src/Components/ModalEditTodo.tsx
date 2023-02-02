@@ -139,6 +139,15 @@ function ModalEditTodo({ boardId, index }: IModalEditProps) {
       };
     });
   };
+  const addCategory = ({ value }: any) => {
+    /* 카테고리 추가 생성 코드 */
+    setTodo((oldTodos) => {
+      return {
+        ...oldTodos,
+        [value]: [],
+      };
+    });
+  };
   return (
     <Modal showModal={displayModal.isDisplay}>
       <Overlay onClick={hideModal} />
