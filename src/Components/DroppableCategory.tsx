@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   border-radius: 5px;
   width: 272px;
   height: fit-content;
-  padding: 0 5px;
+  padding: 0 8px;
 `;
 
 const TitleDiv = styled.div`
@@ -68,19 +68,13 @@ const Board = styled.ul<IBoardProps>`
       ? "#E2E4EA"
       : "#ebecf0"};
   /* flex-grow: 1; */
-  li {
-    color: blue;
-    &:last-child {
-      color: red;
-    }
-  }
 `;
 
 const AddCardDiv = styled.div`
-  padding: 5px;
+  margin: 5px 0;
 `;
 
-const AddCard = styled.div`
+const AddCardBtn = styled.div`
   padding: 10px 8px;
   border-radius: 5px;
   cursor: pointer;
@@ -92,6 +86,46 @@ const AddCard = styled.div`
   }
   span {
     color: #6c7990;
+  }
+`;
+
+const AddCard = styled.div`
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 11px;
+  box-shadow: 0px 1.5px 0px rgba(0, 0, 0, 0.2);
+`;
+
+const CardInput = styled.input`
+  width: 100%;
+  outline: none;
+  border: none;
+`;
+
+const BtnDiv = styled.div`
+  display: flex;
+`;
+
+const SaveBtn = styled.button`
+  padding: 10px 12px;
+  background-color: #0079bf;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 10px;
+`;
+
+const XButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: #42526e;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 8px;
+  :hover {
+    background-color: #dadbe2;
   }
 `;
 
@@ -157,15 +191,32 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
             </Board>
           )}
         </Droppable>
+        <div>
+          <form onSubmit={handleSubmit(onValid)}>
+            <AddCard>
+              <CardInput
+                {...register("todo", { required: true })}
+                placeholder="Enter a title for this card..."
+                type="text"
+              />
+            </AddCard>
+            <BtnDiv>
+              <SaveBtn type="button">Add Card</SaveBtn>
+              <XButton type="button">
+                <i className="fa-solid fa-xmark fa-2x"></i>
+              </XButton>
+            </BtnDiv>
+          </form>
+        </div>
         <AddCardDiv>
-          <AddCard>
+          <AddCardBtn>
             <span>
               <span style={{ marginRight: "5px" }}>
                 <i className="fa-solid fa-plus"></i>
               </span>
               Add a Card
             </span>
-          </AddCard>
+          </AddCardBtn>
         </AddCardDiv>
         {/* <Form onSubmit={handleSubmit(onValid)}>
           <input
