@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { ITodo, todoState, modalState } from "../atoms";
 import { useSetRecoilState } from "recoil";
 import ModalEditTodo from "./ModalEditTodo";
+import stydles from "../css/Style.module.css";
+import React from "react";
 
 const Wrapper = styled.div`
   background-color: #ebecf0;
@@ -36,6 +38,7 @@ const EditBtn = styled.button`
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
+  background-color: transparent;
   :hover {
     background-color: #dadbe2;
     i {
@@ -44,13 +47,6 @@ const EditBtn = styled.button`
   }
   i {
     color: #6b778c;
-  }
-`;
-
-const Form = styled.form`
-  width: 100%;
-  input {
-    width: 100%;
   }
 `;
 
@@ -95,6 +91,10 @@ const AddCard = styled.div`
   padding: 10px;
   margin-bottom: 11px;
   box-shadow: 0px 1.5px 0px rgba(0, 0, 0, 0.2);
+`;
+
+const AddFormDiv = styled.div`
+  margin-bottom: 11px;
 `;
 
 const CardInput = styled.input`
@@ -156,10 +156,21 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
     setTodo((allBoard) => {
       return {
         ...allBoard,
-        [boardId]: [newObj, ...allBoard[boardId]],
+        [boardId]: [...allBoard[boardId], newObj],
       };
     });
     setValue("todo", "");
+  };
+  const hideElement = (event: React.MouseEvent<HTMLDivElement>) => {
+    const addCardBtn = event.currentTarget;
+    addCardBtn.classList.toggle(stydles.hide);
+    addCardBtn.previousElementSibling?.classList.toggle(stydles.hide);
+  };
+  const hideForm = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const formDiv =
+      event.currentTarget.parentElement?.parentElement?.parentElement;
+    formDiv?.classList.toggle(stydles.hide);
+    formDiv?.nextElementSibling?.classList.toggle(stydles.hide);
   };
   return (
     <>
@@ -191,7 +202,7 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
             </Board>
           )}
         </Droppable>
-        <div>
+        <AddFormDiv className={stydles.hide + " addCard-div"}>
           <form onSubmit={handleSubmit(onValid)}>
             <AddCard>
               <CardInput
@@ -201,14 +212,14 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
               />
             </AddCard>
             <BtnDiv>
-              <SaveBtn type="button">Add Card</SaveBtn>
-              <XButton type="button">
+              <SaveBtn type="submit">Add Card</SaveBtn>
+              <XButton onClick={hideForm} type="button">
                 <i className="fa-solid fa-xmark fa-2x"></i>
               </XButton>
             </BtnDiv>
           </form>
-        </div>
-        <AddCardDiv>
+        </AddFormDiv>
+        <AddCardDiv onClick={hideElement}>
           <AddCardBtn>
             <span>
               <span style={{ marginRight: "5px" }}>
@@ -218,12 +229,6 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
             </span>
           </AddCardBtn>
         </AddCardDiv>
-        {/* <Form onSubmit={handleSubmit(onValid)}>
-          <input
-            {...register("todo", { required: true })}
-            placeholder="Write todos..."
-          />
-        </Form> */}
         <ModalEditTodo toUse="category" boardId={boardId} />
       </Wrapper>
     </>
