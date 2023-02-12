@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { modalState } from "../atoms";
@@ -9,7 +9,7 @@ const Card = styled.li<{ isDragging: boolean }>`
   background-color: #ffffff;
   border-radius: 5px;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 11px;
   box-shadow: ${(props) =>
     props.isDragging
       ? "0px 0px 2px rgba(0, 0, 0, 0.3)"
@@ -17,9 +17,11 @@ const Card = styled.li<{ isDragging: boolean }>`
   position: relative;
   :hover {
     background-color: #f4f5f7;
-  }
-  &:last-child {
-    background-color: red;
+    button {
+      i {
+        display: block;
+      }
+    }
   }
 `;
 
@@ -34,13 +36,13 @@ const EditBtn = styled.button`
   border-radius: 4px;
   background-color: transparent;
   :hover {
-    display: "";
     background-color: #dadbe2;
     i {
       color: #172b4d;
     }
   }
   i {
+    display: none;
     color: #6b778c;
   }
 `;
@@ -54,9 +56,11 @@ interface IDraggableProps {
 
 function DraggableTodo({ boardId, todoId, todoText, index }: IDraggableProps) {
   const setDisplayModal = useSetRecoilState(modalState);
+  const [id, setId] = useState("");
   const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const card = event.currentTarget.parentElement;
+    const card = event.currentTarget.parentElement as HTMLLIElement;
     const cssInfo = card?.getBoundingClientRect();
+    setId(card?.id);
     if (cssInfo) {
       const left = cssInfo.left;
       const top = cssInfo.top;
@@ -69,6 +73,7 @@ function DraggableTodo({ boardId, todoId, todoText, index }: IDraggableProps) {
       <Draggable draggableId={todoId + ""} index={index}>
         {(provided, snapshot) => (
           <Card
+            id={boardId}
             ref={provided.innerRef}
             {...provided.dragHandleProps}
             {...provided.draggableProps}
@@ -81,7 +86,7 @@ function DraggableTodo({ boardId, todoId, todoText, index }: IDraggableProps) {
           </Card>
         )}
       </Draggable>
-      <ModalEditTodo toUse="toDoCard" boardId={boardId} index={index} />
+      {id === "" ? <></> : <ModalEditTodo boardId={id} index={index} />}
     </>
   );
 }
