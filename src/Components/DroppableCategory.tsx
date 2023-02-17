@@ -2,11 +2,11 @@ import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import DraggableTodo from "./DraggableTodo";
 import { useForm } from "react-hook-form";
-import { ITodo, todoState, modalState } from "../atoms";
+import { ITodo, todoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
-import ModalEditTodo from "./ModalEditTodo";
 import stydles from "../css/Style.module.css";
 import React from "react";
+import Title from "./Title";
 
 const Wrapper = styled.div`
   background-color: #ebecf0;
@@ -14,40 +14,6 @@ const Wrapper = styled.div`
   width: 272px;
   height: fit-content;
   padding: 0 8px;
-`;
-
-const TitleDiv = styled.div`
-  position: relative;
-  padding: 10px 8px;
-  padding-right: 36px;
-  margin-bottom: 5px;
-`;
-
-const Title = styled.span`
-  font-weight: 600;
-  font-size: 20px;
-  width: 100%;
-  color: #172b4d;
-`;
-
-const EditBtn = styled.button`
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  background-color: transparent;
-  :hover {
-    background-color: #dadbe2;
-    i {
-      color: #172b4d;
-    }
-  }
-  i {
-    color: #6b778c;
-  }
 `;
 
 interface IBoardProps {
@@ -137,17 +103,6 @@ interface IDroppableProps {
 function DroppableCategory({ todos, boardId }: IDroppableProps) {
   const setTodo = useSetRecoilState(todoState);
   const { register, setValue, handleSubmit } = useForm();
-  const setDisplayModal = useSetRecoilState(modalState);
-  const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const title = event.currentTarget.parentElement;
-    const cssInfo = title?.getBoundingClientRect();
-    if (cssInfo) {
-      const left = cssInfo.left;
-      const top = cssInfo.top;
-      const width = cssInfo.width;
-      setDisplayModal({ isDisplay: true, position: [top, left, width] });
-    }
-  };
   const onValid = ({ todo }: any) => {
     const newObj = {
       id: Date.now(),
@@ -175,12 +130,7 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
   return (
     <>
       <Wrapper>
-        <TitleDiv>
-          <Title>{boardId}</Title>
-          <EditBtn type="button" onClick={handleEdit}>
-            <i className="fa-solid fa-pen-to-square"></i>
-          </EditBtn>
-        </TitleDiv>
+        <Title boardId={boardId} />
         <Droppable droppableId={boardId}>
           {(provided, snapshot) => (
             <Board
@@ -229,7 +179,6 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
             </span>
           </AddCardBtn>
         </AddCardDiv>
-        <ModalEditTodo toUse="category" boardId={boardId} />
       </Wrapper>
     </>
   );
