@@ -119,7 +119,7 @@ function Todolist() {
   const length = Object.keys(todos).length;
   const { register, setValue, handleSubmit } = useForm();
   const onDragEnd = (info: DropResult) => {
-    const { destination, source } = info;
+    const { destination, source, draggableId } = info;
     if (!destination) return;
     if (destination.droppableId === "remove") {
       // To remove
@@ -130,6 +130,25 @@ function Todolist() {
           ...oldTodos,
           [source.droppableId]: copyTodos,
         };
+      });
+      return;
+    }
+    if (destination.droppableId === "entire-droppable") {
+      setTodos((oldTodos) => {
+        const copyTodos = { ...oldTodos };
+        const copyTodos2 = { ...oldTodos };
+        const valuesOfBoardId = copyTodos[draggableId];
+        delete copyTodos[draggableId];
+        delete copyTodos2[draggableId];
+        const keyArr = Object.keys(copyTodos);
+        const backKeyArr = keyArr.splice(0, destination.index);
+        backKeyArr.map((item) => {
+          return delete copyTodos[item];
+        });
+        keyArr.map((item) => {
+          return delete copyTodos2[item];
+        });
+        return { ...copyTodos2, [draggableId]: valuesOfBoardId, ...copyTodos };
       });
       return;
     }
@@ -205,7 +224,7 @@ function Todolist() {
                 >
                   {Object.keys(todos).map((boardId, index) => (
                     <Draggable
-                      draggableId={boardId + String(index)}
+                      draggableId={boardId}
                       index={index}
                       key={boardId + String(index)}
                     >
