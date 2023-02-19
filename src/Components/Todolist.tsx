@@ -24,10 +24,31 @@ const Wrapper = styled.div`
   padding: 10px;
 `;
 
+const Nav = styled.nav`
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  div {
+    padding: 7px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    &:hover {
+      background-color: gray;
+    }
+  }
+`;
+
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   width: 100%;
+  height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   ::-webkit-scrollbar {
@@ -45,10 +66,14 @@ const Container = styled.div`
   }
 `;
 
-const Boards = styled.ul<{ count: number }>`
+const Boards = styled.div<{ count: number }>`
   display: grid;
   grid-template-columns: ${(props) => "repeat(" + props.count + ", 1fr)"};
   gap: 10px;
+`;
+
+const CategoryDiv = styled.div`
+  height: fit-content;
 `;
 
 const AddListDiv = styled.div`
@@ -207,6 +232,13 @@ function Todolist() {
     <>
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
+          <Nav>
+            <div>
+              <i className="fa-brands fa-trello"></i>
+              <h1>Trello</h1>
+            </div>
+          </Nav>
+          <div>애자일</div>
           <Container>
             <Droppable
               direction="horizontal"
@@ -229,7 +261,7 @@ function Todolist() {
                       key={boardId + String(index)}
                     >
                       {(provided, snapshot) => (
-                        <li
+                        <CategoryDiv
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
@@ -238,12 +270,38 @@ function Todolist() {
                             key={boardId}
                             todos={todos[boardId]}
                             boardId={boardId}
+                            isDragging={snapshot.isDragging}
                           />
                         </li>
+                        </CategoryDiv>
                       )}
                     </Draggable>
                   ))}
                   {provided.placeholder}
+                  <AddListDiv>
+                    <Span onClick={appearForm} className="addList-span">
+                      <span style={{ marginRight: "5px" }}>
+                        <i className="fa-solid fa-plus"></i>
+                      </span>
+                      Add another list
+                    </Span>
+                    <AddListForm
+                      onSubmit={handleSubmit(addCategory)}
+                      className={stydles.hide + " addList-form"}
+                    >
+                      <InputText
+                        {...register("list", { required: true })}
+                        type="text"
+                        placeholder="Enter list title..."
+                      />
+                      <BtnDiv>
+                        <SaveBtn type="submit">Add List</SaveBtn>
+                        <XButton type="button" onClick={disappearForm}>
+                          <i className="fa-solid fa-xmark fa-2x"></i>
+                        </XButton>
+                      </BtnDiv>
+                    </AddListForm>
+                  </AddListDiv>
                 </Boards>
               )}
             </Droppable>

@@ -20,15 +20,15 @@ const Board = styled.div`
   }
 `;
 
-function DroppableRemove() {
+function DroppableRmCategory() {
   return (
     <>
-      <Droppable type="CATEGORY" droppableId="rmCategory">
+      <Droppable type="LIST" droppableId="rmList">
         {(provided) => (
           <Board ref={provided.innerRef}>
             <div>
               <i className="fa-solid fa-trash fa-lg"></i>
-              <span>카테고리 삭제</span>
+              <span>리스트 삭제</span>
             </div>
             {provided.placeholder}
           </Board>
@@ -38,4 +38,4 @@ function DroppableRemove() {
   );
 }
 
-export default DroppableRemove;
+export default DroppableRmCategory;
