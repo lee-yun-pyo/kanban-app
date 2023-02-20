@@ -1,13 +1,15 @@
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 
-const Board = styled.div`
+const Board = styled.div<{ isDraggingOver: boolean }>`
   width: 100%;
   padding: 15px;
   border-radius: 10px;
-  &:hover {
-    background-color: aliceblue;
-  }
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => (props.isDraggingOver ? "violet" : "")};
   div {
     display: flex;
     align-items: center;
@@ -24,13 +26,15 @@ function DroppableRmCategory() {
   return (
     <>
       <Droppable type="LIST" droppableId="rmList">
-        {(provided) => (
-          <Board ref={provided.innerRef}>
+        {(provided, snapshot) => (
+          <Board
+            isDraggingOver={snapshot.isDraggingOver}
+            ref={provided.innerRef}
+          >
             <div>
               <i className="fa-solid fa-trash fa-lg"></i>
               <span>리스트 삭제</span>
             </div>
-            {provided.placeholder}
           </Board>
         )}
       </Droppable>

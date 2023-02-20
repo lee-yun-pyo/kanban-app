@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   width: 272px;
   height: fit-content;
   padding: 0 8px;
+  margin-right: 10px;
 `;
 
 interface IBoardProps {
@@ -131,7 +132,7 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
     <>
       <Wrapper>
         <Title boardId={boardId} />
-        <Droppable droppableId={boardId}>
+        <Droppable type="LIST" droppableId={boardId}>
           {(provided, snapshot) => (
             <Board
               isDraggingOver={snapshot.isDraggingOver}

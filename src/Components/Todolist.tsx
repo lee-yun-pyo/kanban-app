@@ -11,6 +11,7 @@ import DroppableCategory from "./DroppableCategory";
 import DroppableRemove from "./DroppableRemove";
 import { useForm } from "react-hook-form";
 import stydles from "../css/Style.module.css";
+import DroppableRmCategory from "./DroppableRmCategory";
 
 const Wrapper = styled.div`
   display: flex;
@@ -69,7 +70,6 @@ const Container = styled.div`
 const Boards = styled.div<{ count: number }>`
   display: grid;
   grid-template-columns: ${(props) => "repeat(" + props.count + ", 1fr)"};
-  gap: 10px;
 `;
 
 const CategoryDiv = styled.div`
@@ -139,14 +139,28 @@ const XButton = styled.button`
   }
 `;
 
+const Remove = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 5px;
+  box-shadow: 0px -1px 15px rgba(0, 0, 0, 0.1);
+`;
+const Separator = styled.div`
+  background-color: rgba(0, 0, 0, 0.2);
+  height: 100%;
+  width: 1px;
+  margin: 0 5px;
+`;
 function Todolist() {
   const [todos, setTodos] = useRecoilState(todoState);
-  const length = Object.keys(todos).length;
+  const length = Object.keys(todos).length + 1;
   const { register, setValue, handleSubmit } = useForm();
   const onDragEnd = (info: DropResult) => {
     const { destination, source, draggableId } = info;
     if (!destination) return;
-    if (destination.droppableId === "remove") {
+    if (destination.droppableId === "rmList") {
       // To remove
       setTodos((oldTodos) => {
         const copyTodos = [...oldTodos[source.droppableId]];
@@ -155,6 +169,14 @@ function Todolist() {
           ...oldTodos,
           [source.droppableId]: copyTodos,
         };
+      });
+      return;
+    }
+    if (destination.droppableId === "rmCategory") {
+      setTodos((oldTodos) => {
+        const copyTodos = { ...oldTodos };
+        delete copyTodos[draggableId];
+        return copyTodos;
       });
       return;
     }
@@ -238,7 +260,6 @@ function Todolist() {
               <h1>Trello</h1>
             </div>
           </Nav>
-          <div>애자일</div>
           <Container>
             <Droppable
               direction="horizontal"
@@ -250,9 +271,6 @@ function Todolist() {
                   count={length}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  style={{
-                    backgroundColor: snapshot.isDraggingOver ? "blue" : "grey",
-                  }}
                 >
                   {Object.keys(todos).map((boardId, index) => (
                     <Draggable
@@ -270,9 +288,7 @@ function Todolist() {
                             key={boardId}
                             todos={todos[boardId]}
                             boardId={boardId}
-                            isDragging={snapshot.isDragging}
                           />
-                        </li>
                         </CategoryDiv>
                       )}
                     </Draggable>
@@ -305,32 +321,12 @@ function Todolist() {
                 </Boards>
               )}
             </Droppable>
-            <AddListDiv>
-              <Span onClick={appearForm} className="addList-span">
-                <span style={{ marginRight: "5px" }}>
-                  <i className="fa-solid fa-plus"></i>
-                </span>
-                Add another list
-              </Span>
-              <AddListForm
-                onSubmit={handleSubmit(addCategory)}
-                className={stydles.hide + " addList-form"}
-              >
-                <InputText
-                  {...register("list", { required: true })}
-                  type="text"
-                  placeholder="Enter list title..."
-                />
-                <BtnDiv>
-                  <SaveBtn type="submit">Add List</SaveBtn>
-                  <XButton type="button" onClick={disappearForm}>
-                    <i className="fa-solid fa-xmark fa-2x"></i>
-                  </XButton>
-                </BtnDiv>
-              </AddListForm>
-            </AddListDiv>
           </Container>
-          <DroppableRemove />
+          <Remove>
+            <DroppableRmCategory />
+            <Separator />
+            <DroppableRemove />
+          </Remove>
         </Wrapper>
       </DragDropContext>
     </>
