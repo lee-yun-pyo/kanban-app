@@ -10,8 +10,8 @@ import { todoState } from "../atoms";
 import DroppableCategory from "./DroppableCategory";
 import DroppableRemove from "./DroppableRemove";
 import { useForm } from "react-hook-form";
-import stydles from "../css/Style.module.css";
 import DroppableRmCategory from "./DroppableRmCategory";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   display: flex;
@@ -153,6 +153,7 @@ const Separator = styled.div`
   margin: 0 5px;
 `;
 function Todolist() {
+  const [showing, setShowing] = useState(false);
   const [todos, setTodos] = useRecoilState(todoState);
   const length = Object.keys(todos).length + 1;
   const { register, setValue, handleSubmit } = useForm();
@@ -227,18 +228,6 @@ function Todolist() {
       });
     }
   };
-  const appearForm = () => {
-    const span = document.querySelector(".addList-span") as HTMLSpanElement;
-    const form = document.querySelector(".addList-form") as HTMLFormElement;
-    span.classList.toggle(stydles.hide);
-    form.classList.toggle(stydles.hide);
-  };
-  const disappearForm = () => {
-    const span = document.querySelector(".addList-span") as HTMLSpanElement;
-    const form = document.querySelector(".addList-form") as HTMLFormElement;
-    span.classList.toggle(stydles.hide);
-    form.classList.toggle(stydles.hide);
-  };
   const addCategory = ({ list }: any) => {
     /* 카테고리 추가 생성 코드 */
     setTodos((oldTodos) => {
@@ -296,28 +285,34 @@ function Todolist() {
                   ))}
                   {provided.placeholder}
                   <AddListDiv>
-                    <Span onClick={appearForm} className="addList-span">
-                      <span style={{ marginRight: "5px" }}>
-                        <i className="fa-solid fa-plus"></i>
-                      </span>
-                      Add another list
-                    </Span>
-                    <AddListForm
-                      onSubmit={handleSubmit(addCategory)}
-                      className={stydles.hide + " addList-form"}
-                    >
-                      <InputText
-                        {...register("list", { required: true })}
-                        type="text"
-                        placeholder="Enter list title..."
-                      />
-                      <BtnDiv>
-                        <SaveBtn type="submit">Add List</SaveBtn>
-                        <XButton type="button" onClick={disappearForm}>
-                          <i className="fa-solid fa-xmark fa-2x"></i>
-                        </XButton>
-                      </BtnDiv>
-                    </AddListForm>
+                    {showing ? (
+                      <AddListForm onSubmit={handleSubmit(addCategory)}>
+                        <InputText
+                          {...register("list", { required: true })}
+                          type="text"
+                          placeholder="Enter list title..."
+                        />
+                        <BtnDiv>
+                          <SaveBtn type="submit">Add List</SaveBtn>
+                          <XButton
+                            type="button"
+                            onClick={() => setShowing((prev) => !prev)}
+                          >
+                            <i className="fa-solid fa-xmark fa-2x"></i>
+                          </XButton>
+                        </BtnDiv>
+                      </AddListForm>
+                    ) : (
+                      <Span
+                        onClick={() => setShowing((prev) => !prev)}
+                        className="addList-span"
+                      >
+                        <span style={{ marginRight: "5px" }}>
+                          <i className="fa-solid fa-plus"></i>
+                        </span>
+                        Add another list
+                      </Span>
+                    )}
                   </AddListDiv>
                 </Boards>
               )}
