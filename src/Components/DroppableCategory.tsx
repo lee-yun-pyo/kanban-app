@@ -4,8 +4,7 @@ import DraggableTodo from "./DraggableTodo";
 import { useForm } from "react-hook-form";
 import { ITodo, todoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
-import stydles from "../css/Style.module.css";
-import React from "react";
+import React, { useState } from "react";
 import Title from "./Title";
 
 const Wrapper = styled.div`
@@ -119,6 +118,7 @@ interface IDroppableProps {
 }
 
 function DroppableCategory({ todos, boardId }: IDroppableProps) {
+  const [showing, setShowing] = useState(false);
   const setTodo = useSetRecoilState(todoState);
   const { register, setValue, handleSubmit } = useForm();
   const onValid = ({ todo }: any) => {
@@ -133,17 +133,6 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
       };
     });
     setValue("todo", "");
-  };
-  const hideElement = (event: React.MouseEvent<HTMLDivElement>) => {
-    const addCardBtn = event.currentTarget;
-    addCardBtn.classList.toggle(stydles.hide);
-    addCardBtn.previousElementSibling?.classList.toggle(stydles.hide);
-  };
-  const hideForm = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const formDiv =
-      event.currentTarget.parentElement?.parentElement?.parentElement;
-    formDiv?.classList.toggle(stydles.hide);
-    formDiv?.nextElementSibling?.classList.toggle(stydles.hide);
   };
   return (
     <Wrapper>
@@ -169,33 +158,39 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
           </Board>
         )}
       </Droppable>
-      <AddFormDiv className={stydles.hide + " addCard-div"}>
-        <form onSubmit={handleSubmit(onValid)}>
-          <AddCard>
-            <CardInput
-              {...register("todo", { required: true })}
-              placeholder="Enter a title for this card..."
-              type="text"
-            />
-          </AddCard>
-          <BtnDiv>
-            <SaveBtn type="submit">Add Card</SaveBtn>
-            <XButton onClick={hideForm} type="button">
-              <i className="fa-solid fa-xmark fa-2x"></i>
-            </XButton>
-          </BtnDiv>
-        </form>
-      </AddFormDiv>
-      <AddCardDiv onClick={hideElement}>
-        <AddCardBtn>
-          <span>
-            <span style={{ marginRight: "5px" }}>
-              <i className="fa-solid fa-plus"></i>
+      {showing ? (
+        <AddFormDiv>
+          <form onSubmit={handleSubmit(onValid)}>
+            <AddCard>
+              <CardInput
+                {...register("todo", { required: true })}
+                placeholder="Enter a title for this card..."
+                type="text"
+              />
+            </AddCard>
+            <BtnDiv>
+              <SaveBtn type="submit">Add Card</SaveBtn>
+              <XButton
+                onClick={() => setShowing((prev) => !prev)}
+                type="button"
+              >
+                <i className="fa-solid fa-xmark fa-2x"></i>
+              </XButton>
+            </BtnDiv>
+          </form>
+        </AddFormDiv>
+      ) : (
+        <AddCardDiv onClick={() => setShowing((prev) => !prev)}>
+          <AddCardBtn>
+            <span>
+              <span style={{ marginRight: "5px" }}>
+                <i className="fa-solid fa-plus"></i>
+              </span>
+              Add a Card
             </span>
-            Add a Card
-          </span>
-        </AddCardBtn>
-      </AddCardDiv>
+          </AddCardBtn>
+        </AddCardDiv>
+      )}
     </Wrapper>
   );
 }
