@@ -49,11 +49,9 @@ const Container = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  height: 100%;
-  overflow-x: auto;
   overflow-y: hidden;
   ::-webkit-scrollbar {
-    height: 15px;
+    height: 11px;
   }
   ::-webkit-scrollbar-thumb {
     background-color: #dfe6e9;
@@ -74,6 +72,7 @@ const Boards = styled.div<{ count: number }>`
 
 const CategoryDiv = styled.div`
   height: fit-content;
+  max-height: 100%;
 `;
 
 const AddListDiv = styled.div`
@@ -279,17 +278,19 @@ function Todolist() {
                       key={boardId + String(index)}
                     >
                       {(provided, snapshot) => (
-                        <CategoryDiv
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <DroppableCategory
-                            key={boardId}
-                            todos={todos[boardId]}
-                            boardId={boardId}
-                          />
-                        </CategoryDiv>
+                        <div style={{ height: "100%" }}>
+                          <CategoryDiv
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <DroppableCategory
+                              key={boardId}
+                              todos={todos[boardId]}
+                              boardId={boardId}
+                            />
+                          </CategoryDiv>
+                        </div>
                       )}
                     </Draggable>
                   ))}

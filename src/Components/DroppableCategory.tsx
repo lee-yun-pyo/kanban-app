@@ -12,9 +12,10 @@ const Wrapper = styled.div`
   background-color: #ebecf0;
   border-radius: 5px;
   width: 272px;
-  height: fit-content;
-  padding: 0 8px;
+  height: 100%;
+  padding: 1px 8px;
   margin-right: 10px;
+  // max-height: 100%;
 `;
 
 interface IBoardProps {
@@ -24,13 +25,29 @@ interface IBoardProps {
 
 const Board = styled.ul<IBoardProps>`
   width: 100%;
+  min-height: 1px;
+  max-height: 100%;
   background-color: ${(props) =>
     props.isDraggingOver
       ? "#E2E4EA"
       : props.isDraggingFromThisWith
       ? "#E2E4EA"
       : "#ebecf0"};
-  /* flex-grow: 1; */
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* ::-webkit-scrollbar {
+    width: 11px;
+  } */
+  /* ::-webkit-scrollbar-thumb {
+    background-color: #dfe6e9;
+    border-radius: 7px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #fff;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 7px;
+  } */
 `;
 
 const AddCardDiv = styled.div`
@@ -129,59 +146,57 @@ function DroppableCategory({ todos, boardId }: IDroppableProps) {
     formDiv?.nextElementSibling?.classList.toggle(stydles.hide);
   };
   return (
-    <>
-      <Wrapper>
-        <Title boardId={boardId} />
-        <Droppable type="LIST" droppableId={boardId}>
-          {(provided, snapshot) => (
-            <Board
-              isDraggingOver={snapshot.isDraggingOver}
-              isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {todos.map((todo, index) => (
-                <DraggableTodo
-                  key={todo.id}
-                  todoId={todo.id}
-                  todoText={todo.text}
-                  index={index}
-                  boardId={boardId}
-                />
-              ))}
-              {provided.placeholder}
-            </Board>
-          )}
-        </Droppable>
-        <AddFormDiv className={stydles.hide + " addCard-div"}>
-          <form onSubmit={handleSubmit(onValid)}>
-            <AddCard>
-              <CardInput
-                {...register("todo", { required: true })}
-                placeholder="Enter a title for this card..."
-                type="text"
+    <Wrapper>
+      <Title boardId={boardId} />
+      <Droppable type="LIST" droppableId={boardId}>
+        {(provided, snapshot) => (
+          <Board
+            isDraggingOver={snapshot.isDraggingOver}
+            isDraggingFromThisWith={Boolean(snapshot.draggingFromThisWith)}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {todos.map((todo, index) => (
+              <DraggableTodo
+                key={todo.id}
+                todoId={todo.id}
+                todoText={todo.text}
+                index={index}
+                boardId={boardId}
               />
-            </AddCard>
-            <BtnDiv>
-              <SaveBtn type="submit">Add Card</SaveBtn>
-              <XButton onClick={hideForm} type="button">
-                <i className="fa-solid fa-xmark fa-2x"></i>
-              </XButton>
-            </BtnDiv>
-          </form>
-        </AddFormDiv>
-        <AddCardDiv onClick={hideElement}>
-          <AddCardBtn>
-            <span>
-              <span style={{ marginRight: "5px" }}>
-                <i className="fa-solid fa-plus"></i>
-              </span>
-              Add a Card
+            ))}
+            {provided.placeholder}
+          </Board>
+        )}
+      </Droppable>
+      <AddFormDiv className={stydles.hide + " addCard-div"}>
+        <form onSubmit={handleSubmit(onValid)}>
+          <AddCard>
+            <CardInput
+              {...register("todo", { required: true })}
+              placeholder="Enter a title for this card..."
+              type="text"
+            />
+          </AddCard>
+          <BtnDiv>
+            <SaveBtn type="submit">Add Card</SaveBtn>
+            <XButton onClick={hideForm} type="button">
+              <i className="fa-solid fa-xmark fa-2x"></i>
+            </XButton>
+          </BtnDiv>
+        </form>
+      </AddFormDiv>
+      <AddCardDiv onClick={hideElement}>
+        <AddCardBtn>
+          <span>
+            <span style={{ marginRight: "5px" }}>
+              <i className="fa-solid fa-plus"></i>
             </span>
-          </AddCardBtn>
-        </AddCardDiv>
-      </Wrapper>
-    </>
+            Add a Card
+          </span>
+        </AddCardBtn>
+      </AddCardDiv>
+    </Wrapper>
   );
 }
 

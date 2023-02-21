@@ -8,7 +8,7 @@ import ModalEditTodo from "./ModalEditTodo";
 const Card = styled.li<{ isDragging: boolean }>`
   background-color: #ffffff;
   border-radius: 5px;
-  padding: 10px;
+  padding: 20px 10px;
   margin-bottom: 11px;
   box-shadow: ${(props) =>
     props.isDragging
