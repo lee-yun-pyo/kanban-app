@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import stydles from "../css/Style.module.css";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import { todoState } from "../atoms";
+import { useState } from "react";
 
 const TitleDiv = styled.div`
   position: relative;
@@ -37,16 +37,12 @@ interface ITitleProps {
 }
 
 function Title({ boardId }: ITitleProps) {
+  const [showing, setShowing] = useState(false);
   const { register, setValue, handleSubmit } = useForm();
   const setTodo = useSetRecoilState(todoState);
-  const displayTitleText = () => {
-    const titleText = document.querySelector(`.p-title.${stydles.hide}`);
-    titleText?.classList.toggle(stydles.hide);
-    titleText?.nextElementSibling?.classList.toggle(stydles.hide);
-  };
   const changeTitle = ({ title }: any) => {
     if (title === boardId || title === "") {
-      displayTitleText();
+      setShowing((prev) => !prev);
     } else {
       /* list title 변경 */
       setTodo((oldTodos) => {
@@ -73,26 +69,24 @@ function Title({ boardId }: ITitleProps) {
       setValue("title", "");
     }
   };
-  const hideElement = (event: React.MouseEvent<HTMLSpanElement>) => {
-    displayTitleText();
-    event.currentTarget.classList.toggle(stydles.hide);
-    const inputNow = event.currentTarget.nextElementSibling as HTMLInputElement;
-    inputNow.classList.toggle(stydles.hide);
-    inputNow.focus();
-    inputNow.select();
-  };
   return (
     <TitleDiv>
       <form onSubmit={handleSubmit(changeTitle)}>
-        <TitleText className="p-title" onClick={hideElement}>
-          {boardId}
-        </TitleText>
-        <InputText
-          className={stydles.hide}
-          {...register("title", { value: boardId })}
-          type="text"
-          autoFocus
-        />
+        {showing ? (
+          <InputText
+            className="inputTag"
+            {...register("title", { value: boardId })}
+            type="text"
+            autoFocus
+          />
+        ) : (
+          <TitleText
+            className="p-title"
+            onClick={() => setShowing((prev) => !prev)}
+          >
+            {boardId}
+          </TitleText>
+        )}
       </form>
     </TitleDiv>
   );
